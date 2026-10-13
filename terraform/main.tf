@@ -19,3 +19,23 @@ module "eks" {
   private_subnet_ids = module.networking.private_subnet_ids
   lab_role_arn       = var.lab_role_arn
 }
+
+module "sqs" {
+  source = "./modules/sqs"
+
+  name = "${var.project_name}-${var.environment}-events"
+
+  tags = {
+    Project     = var.project_name
+    Environment = var.environment
+    ManagedBy   = "terraform"
+  }
+}
+
+output "sqs_queue_url" {
+  value = module.sqs.queue_url
+}
+
+output "sqs_queue_arn" {
+  value = module.sqs.queue_arn
+}
