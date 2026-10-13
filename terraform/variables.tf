@@ -39,3 +39,7 @@ variable "cluster_version" {
   type    = string
   default = "1.21"
 }
+
+variable "project_name" {
+  type = string
+}
