@@ -2,7 +2,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: db-schema-init
-  namespace: auth-service
+  namespace: toggle-master
 spec:
   backoffLimit: 3
   template:
