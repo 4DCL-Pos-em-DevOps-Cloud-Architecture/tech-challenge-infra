@@ -54,6 +54,9 @@ jobs:
       - name: Initialize Terraform
         run: terraform init -input=false
 
+      - name: Adapt EKS module for AWS Academy
+        run: python3 scripts/patch-eks-academy.py
+
       - name: Validate Terraform
         run: terraform validate
 
@@ -103,6 +106,9 @@ jobs:
 
       - name: Initialize Terraform
         run: terraform init -input=false
+
+      - name: Adapt EKS module for AWS Academy
+        run: python3 scripts/patch-eks-academy.py
 
       - name: Create apply plan
         run: terraform plan -input=false -no-color -out=tfplan
