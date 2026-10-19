@@ -14,6 +14,7 @@ module "eks" {
   enable_cluster_creator_admin_permissions = false
   endpoint_private_access                  = true
   create_kms_key                           = false
+  encryption_config                        = null
 
   compute_config = {
     enabled = false
