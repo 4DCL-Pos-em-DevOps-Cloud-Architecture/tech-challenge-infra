@@ -5,7 +5,7 @@ variable "aws_region" {
 
 variable "state_bucket_name" {
   type    = string
-  default = "togglemaster-terraform-state"
+  default = "togglemaster-terraform-state-123456"
 }
 
 variable "project_name" {

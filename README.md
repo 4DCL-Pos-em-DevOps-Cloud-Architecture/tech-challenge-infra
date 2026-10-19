@@ -19,7 +19,7 @@ infra/
 
 ## 📋 Pré-requisitos
 
-- [Terraform](https://developer.hashicorp.com/terraform/install) `1.6` ou superior;
+- [Terraform](https://developer.hashicorp.com/terraform/install) `1.10` ou superior;
 - [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html);
 - Credenciais AWS configuradas, por exemplo com `aws configure`;
 - Permissões para criar VPC, EKS, RDS, ElastiCache, DynamoDB, SQS e ECR;
@@ -97,7 +97,7 @@ O estado do Terraform não deve permanecer local em um ambiente compartilhado.
 
 O diretório `terraform/bootstrap/state-bucket` cria o bucket utilizado pelo backend S3, usando estado local somente durante o bootstrap. O projeto principal possui o backend remoto em `terraform/backend.tf`, utilizando:
 
-- Bucket: `togglemaster-terraform-state`;
+- Bucket: `togglemaster-terraform-state-123456`;
 - Região: `us-east-1`;
 - Chave: `dev/terraform.tfstate`;
 - Lock com `use_lockfile`;
