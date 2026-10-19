@@ -1,6 +1,5 @@
 module "eks" {
-  source  = "terraform-aws-modules/eks/aws"
-  version = "~> 21.0"
+  source = "git::https://github.com/terraform-aws-modules/terraform-aws-eks.git?ref=f02df92b66a9776a689a2baf39e7474f3b703d89"
 
   name               = var.cluster_name
   kubernetes_version = var.cluster_version
@@ -13,6 +12,7 @@ module "eks" {
 
   enable_cluster_creator_admin_permissions = false
   endpoint_private_access                  = true
+  create_kms_key                           = false
 
   compute_config = {
     enabled = false
