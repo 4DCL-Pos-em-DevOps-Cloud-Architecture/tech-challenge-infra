@@ -1,4 +1,8 @@
+data "aws_caller_identity" "current" {}
+
 locals {
+  lab_role_arn = var.lab_role_arn != "" ? var.lab_role_arn : "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.lab_role_name}"
+
   common_tags = {
     Project     = var.project_name
     Environment = var.environment
@@ -27,7 +31,7 @@ module "eks" {
   vpc_id             = module.networking.vpc_id
   private_subnet_ids = module.networking.private_subnet_ids
 
-  lab_role_arn = nonsensitive(var.lab_role_arn)
+  lab_role_arn = local.lab_role_arn
   tags         = local.common_tags
 }
 

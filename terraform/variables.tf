@@ -4,8 +4,13 @@ variable "aws_region" {
 }
 
 variable "lab_role_arn" {
-  type      = string
-  sensitive = true
+  type    = string
+  default = ""
+}
+
+variable "lab_role_name" {
+  type    = string
+  default = "voclabs"
 }
 
 variable "cluster_name" {
