@@ -43,3 +43,43 @@ variable "cluster_version" {
 variable "project_name" {
   type = string
 }
+
+variable "db_engine" {
+  type    = string
+  default = "postgres"
+}
+
+variable "db_engine_version" {
+  type    = string
+  default = "15.3"
+}
+
+variable "db_instance_class" {
+  type    = string
+  default = "db.t3.micro"
+}
+
+variable "db_allocated_storage" {
+  type    = number
+  default = 20
+}
+
+variable "db_master_username" {
+  type    = string
+  default = "admin"
+}
+
+variable "redis_engine_version" {
+  type    = string
+  default = "6.x"
+}
+
+variable "redis_node_type" {
+  type    = string
+  default = "cache.t3.micro"
+}
+
+variable "redis_number_cache_nodes" {
+  type    = number
+  default = 1
+}

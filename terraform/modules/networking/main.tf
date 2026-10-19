@@ -3,19 +3,13 @@ resource "aws_vpc" "this" {
   enable_dns_support   = true
   enable_dns_hostnames = true
 
-  tags = {
-    Name        = "${var.name}-vpc"
-    Environment = var.environment
-  }
+  tags = merge(var.tags, { Name = "${var.name}-vpc" })
 }
 
 resource "aws_internet_gateway" "this" {
   vpc_id = aws_vpc.this.id
 
-  tags = {
-    Name        = "${var.name}-igw"
-    Environment = var.environment
-  }
+  tags = merge(var.tags, { Name = "${var.name}-igw" })
 }
 
 resource "aws_subnet" "public" {
@@ -26,12 +20,11 @@ resource "aws_subnet" "public" {
   availability_zone       = var.availability_zones[count.index]
   map_public_ip_on_launch = true
 
-  tags = {
+  tags = merge(var.tags, {
     Name                                = "${var.name}-public-${count.index + 1}"
-    Environment                         = var.environment
     "kubernetes.io/role/elb"            = "1"
     "kubernetes.io/cluster/${var.name}" = "shared"
-  }
+  })
 }
 
 resource "aws_subnet" "private" {
@@ -41,12 +34,11 @@ resource "aws_subnet" "private" {
   cidr_block        = var.private_subnet_cidrs[count.index]
   availability_zone = var.availability_zones[count.index]
 
-  tags = {
+  tags = merge(var.tags, {
     Name                                = "${var.name}-private-${count.index + 1}"
-    Environment                         = var.environment
     "kubernetes.io/role/internal-elb"   = "1"
     "kubernetes.io/cluster/${var.name}" = "shared"
-  }
+  })
 }
 
 resource "aws_route_table" "public" {
@@ -57,10 +49,7 @@ resource "aws_route_table" "public" {
     gateway_id = aws_internet_gateway.this.id
   }
 
-  tags = {
-    Name        = "${var.name}-public-rt"
-    Environment = var.environment
-  }
+  tags = merge(var.tags, { Name = "${var.name}-public-rt" })
 }
 
 resource "aws_route_table_association" "public" {
@@ -73,10 +62,7 @@ resource "aws_route_table_association" "public" {
 resource "aws_eip" "nat" {
   domain = "vpc"
 
-  tags = {
-    Name        = "${var.name}-nat-eip"
-    Environment = var.environment
-  }
+  tags = merge(var.tags, { Name = "${var.name}-nat-eip" })
 }
 
 resource "aws_nat_gateway" "this" {
@@ -85,10 +71,7 @@ resource "aws_nat_gateway" "this" {
 
   depends_on = [aws_internet_gateway.this]
 
-  tags = {
-    Name        = "${var.name}-nat"
-    Environment = var.environment
-  }
+  tags = merge(var.tags, { Name = "${var.name}-nat" })
 }
 
 resource "aws_route_table" "private" {
@@ -101,10 +84,7 @@ resource "aws_route_table" "private" {
     nat_gateway_id = aws_nat_gateway.this.id
   }
 
-  tags = {
-    Name        = "${var.name}-private-rt-${count.index + 1}"
-    Environment = var.environment
-  }
+  tags = merge(var.tags, { Name = "${var.name}-private-rt-${count.index + 1}" })
 }
 
 resource "aws_route_table_association" "private" {
@@ -112,4 +92,57 @@ resource "aws_route_table_association" "private" {
 
   subnet_id      = aws_subnet.private[count.index].id
   route_table_id = aws_route_table.private[count.index].id
+}
+
+resource "aws_security_group" "db" {
+  name        = "${var.name}-db-sg"
+  description = "Security group for private RDS instances"
+  vpc_id      = aws_vpc.this.id
+
+  ingress {
+    description = "PostgreSQL access from the VPC"
+    from_port   = 5432
+    to_port     = 5432
+    protocol    = "tcp"
+    cidr_blocks = [var.vpc_cidr]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = merge(var.tags, { Name = "${var.name}-db-sg" })
+}
+
+resource "aws_elasticache_subnet_group" "redis" {
+  name       = "${var.name}-redis-subnets"
+  subnet_ids = aws_subnet.private[*].id
+
+  tags = merge(var.tags, { Name = "${var.name}-redis-subnets" })
+}
+
+resource "aws_security_group" "redis" {
+  name        = "${var.name}-redis-sg"
+  description = "Security group for private Redis clusters"
+  vpc_id      = aws_vpc.this.id
+
+  ingress {
+    description = "Redis access from the VPC"
+    from_port   = 6379
+    to_port     = 6379
+    protocol    = "tcp"
+    cidr_blocks = [var.vpc_cidr]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = merge(var.tags, { Name = "${var.name}-redis-sg" })
 }

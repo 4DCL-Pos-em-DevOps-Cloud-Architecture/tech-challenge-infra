@@ -2,19 +2,19 @@ module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "~> 21.0"
 
-  name    = var.cluster_name
+  name               = var.cluster_name
   kubernetes_version = var.cluster_version
 
   create_iam_role = false
   iam_role_arn    = var.lab_role_arn
 
-  vpc_id  = var.vpc_id
+  vpc_id     = var.vpc_id
   subnet_ids = var.private_subnet_ids
 
   enable_cluster_creator_admin_permissions = true
-  endpoint_private_access = true
+  endpoint_private_access                  = true
 
-   compute_config = {
+  compute_config = {
     enabled = false
   }
 
@@ -43,8 +43,5 @@ module "eks" {
     }
   }
 
-  tags = {
-    Environment = var.environment
-    Terraform   = "true"
-  }
+  tags = var.tags
 }

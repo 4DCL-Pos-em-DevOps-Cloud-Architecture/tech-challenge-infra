@@ -21,3 +21,8 @@ variable "public_subnet_cidrs" {
 variable "private_subnet_cidrs" {
   type = list(string)
 }
+
+variable "tags" {
+  type    = map(string)
+  default = {}
+}
