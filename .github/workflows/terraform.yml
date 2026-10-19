@@ -58,7 +58,20 @@ jobs:
         run: terraform validate
 
       - name: Create plan
-        run: terraform plan -input=false -no-color
+        run: |
+          set +e
+          terraform plan -input=false -no-color > plan.log 2>&1
+          plan_status=$?
+          cat plan.log
+          exit $plan_status
+
+      - name: Upload plan log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: terraform-plan-log
+          path: terraform/plan.log
+          if-no-files-found: warn
 
   apply:
     name: Apply infrastructure
