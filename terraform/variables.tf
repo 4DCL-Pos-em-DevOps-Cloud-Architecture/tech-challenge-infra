@@ -37,7 +37,7 @@ variable "private_subnet_cidrs" {
 
 variable "cluster_version" {
   type    = string
-  default = "1.21"
+  default = "1.34"
 }
 
 variable "project_name" {
