@@ -8,7 +8,7 @@ module "ecr" {
 
   repository_image_scan_on_push   = true
   repository_image_tag_mutability = "IMMUTABLE"
-  force_delete                    = false
+  repository_force_delete         = false
 
   repository_lifecycle_policy = jsonencode({
     rules = [
