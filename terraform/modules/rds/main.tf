@@ -7,6 +7,7 @@ module "rds" {
   identifier     = "togglemaster-${each.value}"
   engine         = var.db_engine
   engine_version = var.db_engine_version
+  family         = "postgres15"
 
   instance_class    = var.db_instance_class
   allocated_storage = var.db_allocated_storage

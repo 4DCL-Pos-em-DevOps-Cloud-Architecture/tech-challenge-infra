@@ -26,8 +26,9 @@ module "eks" {
   environment        = var.environment
   vpc_id             = module.networking.vpc_id
   private_subnet_ids = module.networking.private_subnet_ids
-  lab_role_arn       = var.lab_role_arn
-  tags               = local.common_tags
+
+  lab_role_arn = nonsensitive(var.lab_role_arn)
+  tags         = local.common_tags
 }
 
 module "sqs" {
