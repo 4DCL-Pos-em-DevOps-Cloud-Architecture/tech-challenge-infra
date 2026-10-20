@@ -11,9 +11,10 @@ module "redis" {
   parameter_group_name = var.parameter_group_name
   port                 = var.port
 
-  create_subnet_group = false
-  subnet_group_name   = var.subnet_group_name
-  security_group_ids  = var.security_group_ids
+  create_subnet_group   = false
+  subnet_group_name     = var.subnet_group_name
+  security_group_ids    = var.security_group_ids
+  create_security_group = false
 
   transit_encryption_enabled = true
 

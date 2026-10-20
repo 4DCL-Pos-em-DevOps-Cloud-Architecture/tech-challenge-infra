@@ -10,7 +10,7 @@ variable "lab_role_arn" {
 
 variable "lab_role_name" {
   type    = string
-  default = "voclabs"
+  default = "LabRole"
 }
 
 variable "cluster_name" {
@@ -56,7 +56,7 @@ variable "db_engine" {
 
 variable "db_engine_version" {
   type    = string
-  default = "15.3"
+  default = "15"
 }
 
 variable "db_instance_class" {

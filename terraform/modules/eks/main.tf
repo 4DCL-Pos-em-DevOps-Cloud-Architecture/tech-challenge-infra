@@ -15,6 +15,7 @@ module "eks" {
   endpoint_private_access                  = true
   create_kms_key                           = false
   encryption_config                        = null
+  enable_irsa                              = false
 
   compute_config = {
     enabled = false
