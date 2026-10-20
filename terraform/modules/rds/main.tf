@@ -12,7 +12,8 @@ module "rds" {
   instance_class    = var.db_instance_class
   allocated_storage = var.db_allocated_storage
 
-  subnet_ids = var.private_subnet_ids
+  create_db_subnet_group = true
+  subnet_ids             = var.private_subnet_ids
 
   vpc_security_group_ids = [var.db_security_group_id]
 
