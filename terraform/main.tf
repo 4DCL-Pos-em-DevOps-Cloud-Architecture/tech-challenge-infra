@@ -2,12 +2,18 @@ data "aws_caller_identity" "current" {}
 
 locals {
   lab_role_arn = var.lab_role_arn != "" ? var.lab_role_arn : "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.lab_role_name}"
+  master_key   = var.master_key != "" ? var.master_key : random_password.master_key.result
 
   common_tags = {
     Project     = var.project_name
     Environment = var.environment
     ManagedBy   = "terraform"
   }
+}
+
+resource "random_password" "master_key" {
+  length  = 48
+  special = false
 }
 
 module "networking" {
@@ -59,6 +65,41 @@ module "rds" {
   tags        = local.common_tags
 }
 
+module "secrets_manager" {
+  source = "./modules/secrets-manager"
+
+  project_name = var.project_name
+  environment  = var.environment
+  tags         = local.common_tags
+
+  secrets = merge(
+    {
+      for db_name, endpoint in module.rds.rds_endpoints : "${db_name}/database" => {
+        description = "Connection data for the ${db_name} database"
+        value = jsonencode({
+          DATABASE_URL = "postgresql://${var.db_master_username}:${module.rds.rds_passwords[db_name]}@${endpoint}/postgres"
+        })
+      }
+    },
+    {
+      "auth/application" = {
+        description = "Application secrets for the auth service"
+        value = jsonencode({
+          MASTER_KEY = local.master_key
+        })
+      }
+    },
+    var.enable_evaluation_secret ? {
+      "evaluation/application" = {
+        description = "Application secrets for the evaluation service"
+        value = jsonencode({
+          SERVICE_API_KEY = var.service_api_key
+        })
+      }
+    } : {}
+  )
+}
+
 
 module "dynamodb" {
   source = "./modules/dynamodb"
@@ -97,4 +138,9 @@ output "sqs_queue_arn" {
 
 output "ecr_repository_urls" {
   value = module.ecr.repository_urls
+}
+
+output "secret_arns" {
+  description = "ARNs of application and database secrets"
+  value       = module.secrets_manager.secret_arns
 }

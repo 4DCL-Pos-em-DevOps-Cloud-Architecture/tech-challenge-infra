@@ -235,7 +235,47 @@ Antes da aplicação, revise e substitua os placeholders:
 | `<AWS_DYNAMODB_TABLE>` | Nome da tabela DynamoDB |
 | `<REDIS_ENDPOINT>` | Endpoint privado do Redis |
 
-Não versione valores reais de `Secret` no repositório.
+Os valores sensíveis não ficam nos manifestos Kubernetes. O Terraform cria os
+secrets no AWS Secrets Manager por meio do módulo
+`terraform/modules/secrets-manager`, e o External Secrets Operator cria os
+`Secret` Kubernetes em tempo de execução.
+
+O `MASTER_KEY` pode ser gerado automaticamente pelo Terraform. A
+`SERVICE_API_KEY` precisa ser criada pelo `auth-service` e informada ao
+Terraform como variável sensível:
+
+```powershell
+$env:TF_VAR_service_api_key = "tm_key_..."
+terraform apply
+```
+
+Na primeira execução da infraestrutura, mantenha
+`enable_evaluation_secret = false`. Não utilize um valor fictício para a API
+Key e não crie um Secret vazio. O `evaluation-service` somente deve ser
+sincronizado depois que sua chave real existir.
+
+O fluxo recomendado é:
+
+1. Criar a infraestrutura e os secrets dos bancos e do `auth-service`.
+2. Subir o `auth-service` sem sincronizar ainda o `evaluation-service`.
+3. Criar uma API Key pelo endpoint administrativo do `auth-service`.
+4. Configurar `TF_VAR_service_api_key` como secret do GitHub e habilitar o
+   secret do evaluation:
+
+```powershell
+$env:TF_VAR_enable_evaluation_secret = "true"
+$env:TF_VAR_service_api_key = "tm_key_..."
+terraform apply
+```
+
+5. Após a segunda execução do Terraform, permitir a sincronização do
+   `evaluation-service` pelo ArgoCD.
+
+Não versione valores reais de `Secret`, chaves de API ou senhas no repositório.
+
+Neste ambiente AWS Academy, o External Secrets Operator utiliza a `LabRole`
+atribuída aos nós EKS para acessar o Secrets Manager. Em ambientes produtivos,
+prefira uma role exclusiva com EKS Pod Identity.
 
 Para aplicar um serviço manualmente com Kustomize:
 
