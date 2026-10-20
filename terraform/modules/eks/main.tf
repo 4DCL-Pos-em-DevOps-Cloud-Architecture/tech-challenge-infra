@@ -22,10 +22,18 @@ module "eks" {
   }
 
   addons = {
-    coredns                = {}
-    kube-proxy             = {}
-    eks-pod-identity-agent = {}
-    vpc-cni                = {}
+    coredns = {
+      before_compute = true
+    }
+    kube-proxy = {
+      before_compute = true
+    }
+    eks-pod-identity-agent = {
+      before_compute = true
+    }
+    vpc-cni = {
+      before_compute = true
+    }
   }
 
   eks_managed_node_groups = {

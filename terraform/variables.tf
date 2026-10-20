@@ -71,7 +71,7 @@ variable "db_allocated_storage" {
 
 variable "db_master_username" {
   type    = string
-  default = "admin"
+  default = "toggleadmin"
 }
 
 variable "redis_engine_version" {
