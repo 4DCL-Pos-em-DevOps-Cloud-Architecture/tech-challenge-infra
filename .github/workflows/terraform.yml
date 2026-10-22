@@ -64,6 +64,13 @@ jobs:
           ls -la agrocd
           find . -iname "agrocd-applications.yaml"
 
+      - name: Debug repository structure
+        run: |
+          cd ..
+          pwd
+          ls -la
+          find . -iname "agrocd-applications.yaml"
+      
       - name: Validate Terraform
         run: terraform validate
 
