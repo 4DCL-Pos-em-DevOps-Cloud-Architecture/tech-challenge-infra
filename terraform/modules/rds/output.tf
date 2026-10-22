@@ -4,7 +4,9 @@ output "rds_endpoints" {
 }
 
 output "rds_passwords" {
-  description = "Generated master passwords for each database"
-  sensitive   = true
-  value       = { for db_name, db in module.rds : db_name => db.db_instance_password }
+  sensitive = true
+  value = {
+    for db_name, db in module.rds :
+    db_name => db.db_instance_password
+  }
 }

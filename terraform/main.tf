@@ -128,6 +128,57 @@ module "ecr" {
   tags         = local.common_tags
 }
 
+provider "kubernetes" {
+  host                   = module.eks.cluster_endpoint
+  cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
+  exec {
+    api_version = "client.authentication.k8s.io/v1beta1"
+    command     = "aws"
+    args        = ["eks", "get-token", "--cluster-name", module.eks.cluster_name]
+  }
+}
+
+provider "helm" {
+  kubernetes {
+    host                   = module.eks.cluster_endpoint
+    cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
+    exec {
+      api_version = "client.authentication.k8s.io/v1beta1"
+      command     = "aws"
+      args        = ["eks", "get-token", "--cluster-name", module.eks.cluster_name]
+    }
+  }
+}
+
+resource "kubernetes_namespace" "argocd" {
+  metadata {
+    name = "argocd"
+  }
+}
+
+resource "helm_release" "argocd" {
+  name       = "argocd"
+  repository = "https://argoproj.github.io/argo-helm"
+  chart      = "argo-cd"
+  namespace  = kubernetes_namespace.argocd.metadata[0].name
+  version    = "5.46.0"
+
+  values = [<<EOT
+server:
+  service:
+    type: LoadBalancer
+  extraArgs:
+    - --insecure
+EOT
+  ]
+}
+
+resource "kubernetes_manifest" "argocd_applications" {
+  depends_on = [helm_release.argocd]
+
+  manifest = yamldecode(file("${path.module}/../agroCD/argocd-applications.yaml"))
+}
+
 output "sqs_queue_url" {
   value = module.sqs.queue_url
 }
@@ -136,11 +187,31 @@ output "sqs_queue_arn" {
   value = module.sqs.queue_arn
 }
 
+
 output "ecr_repository_urls" {
   value = module.ecr.repository_urls
 }
 
+
 output "secret_arns" {
   description = "ARNs of application and database secrets"
   value       = module.secrets_manager.secret_arns
+}
+
+output "argocd_server_url" {
+  description = "URL publica para acessar a interface do ArgoCD gerada pelo LoadBalancer da AWS"
+  value       = "http://${try(data.kubernetes_service.argocd_server_lb.status[0].load_balancer[0].ingress[0].hostname, "Aguardando provisionamento do LoadBalancer...")}"
+}
+
+data "kubernetes_service" "argocd_server_lb" {
+  depends_on = [helm_release.argocd]
+  metadata {
+    name      = "argocd-server"
+    namespace = kubernetes_namespace.argocd.metadata[0].name
+  }
+}
+
+output "rds_passwords" {
+  sensitive = true
+  value     = module.rds.rds_passwords
 }
