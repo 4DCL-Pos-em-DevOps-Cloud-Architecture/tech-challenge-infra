@@ -176,12 +176,24 @@ EOT
   ]
 }
 
+locals {
+  argocd_applications = {
+    for app in [
+      for document in split(
+        "\n---",
+        "\n${file("${path.module}/../agroCD/agrocd-applications.yaml")}"
+      ) : yamldecode(trimspace(document))
+      if trimspace(document) != ""
+    ] : app.metadata.name => app
+  }
+}
+
 resource "kubernetes_manifest" "argocd_applications" {
+  for_each = local.argocd_applications
+
   depends_on = [helm_release.argocd]
 
-  manifest = yamldecode(
-    file("${path.module}/../agroCD/agrocd-applications.yaml")
-  )
+  manifest = each.value
 }
 
 output "sqs_queue_url" {
