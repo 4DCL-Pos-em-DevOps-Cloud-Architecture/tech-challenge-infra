@@ -9,3 +9,7 @@ output "cluster_endpoint" {
 output "cluster_arn" {
   value = module.eks.cluster_arn
 }
+
+output "cluster_certificate_authority_data" {
+  value = module.eks.cluster_certificate_authority_data
+}
