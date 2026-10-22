@@ -179,7 +179,7 @@ EOT
 resource "kubernetes_manifest" "argocd_applications" {
   depends_on = [helm_release.argocd]
 
-  manifest = yamldecode(file("${path.module}/../agroCD/agrocd-applications.yaml"))
+  manifest = yamldecode(file("${path.module}/../../agrocd/agrocd-applications.yaml"))
 }
 
 output "sqs_queue_url" {
