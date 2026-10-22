@@ -57,18 +57,12 @@ jobs:
       - name: Adapt EKS module for AWS Academy
         run: python3 scripts/patch-eks-academy.py
 
-      - name: Debug Terraform paths
-        run: |
-          pwd
-          ls -la
-          ls -la agrocd
-          find . -iname "agrocd-applications.yaml"
-
       - name: Debug repository structure
         run: |
           cd ..
           pwd
           ls -la
+          ls -la agroCD
           find . -iname "agrocd-applications.yaml"
       
       - name: Validate Terraform
