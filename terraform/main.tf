@@ -216,8 +216,11 @@ output "secret_arns" {
 }
 
 output "argocd_server_url" {
-  description = "URL publica para acessar a interface do ArgoCD gerada pelo LoadBalancer da AWS"
-  value       = "http://${try(data.kubernetes_service.argocd_server_lb.status[0].load_balancer[0].ingress[0].hostname, "Aguardando provisionamento do LoadBalancer...")}"
+  description = "URL publica para acessar a interface do ArgoCD"
+  value = "http://${try(
+    data.kubernetes_service_v1.argocd_server_lb.status[0].load_balancer[0].ingress[0].hostname,
+    "Aguardando provisionamento do LoadBalancer..."
+  )}"
 }
 
 data "kubernetes_service_v1" "argocd_server_lb" {
