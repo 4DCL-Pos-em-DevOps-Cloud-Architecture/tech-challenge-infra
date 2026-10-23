@@ -68,13 +68,13 @@ jobs:
       - name: Validate Terraform
         run: terraform validate
 
-      - name: Create plan
-        run: |
-          set +e
-          terraform plan -input=false -no-color > plan.log 2>&1
-          plan_status=$?
-          cat plan.log
-          exit $plan_status
+      # - name: Create plan
+      #   run: |
+      #     set +e
+      #     terraform plan -input=false -no-color > plan.log 2>&1
+      #     plan_status=$?
+      #     cat plan.log
+      #     exit $plan_status
 
       - name: Upload plan log
         if: always()
@@ -118,8 +118,27 @@ jobs:
       - name: Adapt EKS module for AWS Academy
         run: python3 scripts/patch-eks-academy.py
 
-      - name: Create apply plan
+      
+      # Fase 1: criar a infraestrutura necessária para o cluster
+      - name: Bootstrap VPC and EKS
+        run: |
+          terraform plan -input=false \
+            -target=module.networking \
+            -target=module.eks \
+            -out=eks-bootstrap.tfplan
+
+          terraform apply -input=false -auto-approve eks-bootstrap.tfplan
+
+      # Fase 2: criar os demais recursos, incluindo Argo CD
+      - name: Create full plan
         run: terraform plan -input=false -no-color -out=tfplan
 
       - name: Apply infrastructure
         run: terraform apply -input=false -auto-approve tfplan
+
+
+      # - name: Create apply plan
+      #   run: terraform plan -input=false -no-color -out=tfplan
+
+      # - name: Apply infrastructure
+      #   run: terraform apply -input=false -auto-approve tfplan

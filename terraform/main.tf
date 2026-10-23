@@ -153,7 +153,7 @@ provider "helm" {
   }
 }
 
-resource "kubernetes_namespace" "argocd" {
+resource "kubernetes_namespace_v1" "argocd" {
   metadata {
     name = "argocd"
   }
@@ -163,7 +163,7 @@ resource "helm_release" "argocd" {
   name       = "argocd"
   repository = "https://argoproj.github.io/argo-helm"
   chart      = "argo-cd"
-  namespace  = kubernetes_namespace.argocd.metadata[0].name
+  namespace  = kubernetes_namespace_v1.argocd.metadata[0].name
   version    = "5.46.0"
 
   values = [<<EOT
@@ -224,7 +224,7 @@ data "kubernetes_service" "argocd_server_lb" {
   depends_on = [helm_release.argocd]
   metadata {
     name      = "argocd-server"
-    namespace = kubernetes_namespace.argocd.metadata[0].name
+    namespace = kubernetes_namespace_v1.argocd.metadata[0].name
   }
 }
 
