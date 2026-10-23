@@ -220,7 +220,7 @@ output "argocd_server_url" {
   value       = "http://${try(data.kubernetes_service.argocd_server_lb.status[0].load_balancer[0].ingress[0].hostname, "Aguardando provisionamento do LoadBalancer...")}"
 }
 
-data "kubernetes_service" "argocd_server_lb" {
+data "kubernetes_service_v1" "argocd_server_lb" {
   depends_on = [helm_release.argocd]
   metadata {
     name      = "argocd-server"
