@@ -37,6 +37,8 @@ spec:
       releaseName: external-secrets
       values: |
         installCRDs: false
+        hostNetwork: true
+        dnsPolicy: ClusterFirstWithHostNet
   destination:
     server: https://kubernetes.default.svc
     namespace: external-secrets
