@@ -287,7 +287,25 @@ kubectl apply -k gitops/evaluation-service
 kubectl apply -k gitops/analytics-service
 ```
 
-Para instalar as aplicações Argo CD:
+O Argo CD é instalado separadamente do Terraform, porque a conta AWS Academy
+utilizada neste projeto possui o endpoint privado do EKS e a GitHub Action não
+possui acesso direto à API Kubernetes.
+
+Depois que o EKS estiver disponível, configure o acesso ao cluster e instale o
+Argo CD a partir de uma máquina que consiga alcançar a VPC:
+
+```bash
+aws eks update-kubeconfig --region us-east-1 --name togglemaster-eks
+helm repo add argo https://argoproj.github.io/argo-helm
+helm repo update
+kubectl create namespace argocd
+helm upgrade --install argocd argo/argo-cd \
+  --namespace argocd \
+  --set server.service.type=LoadBalancer \
+  --set server.extraArgs[0]=--insecure
+```
+
+Depois, aplique as aplicações Argo CD:
 
 ```bash
 kubectl apply -f agroCD/agrocd-applications.yaml

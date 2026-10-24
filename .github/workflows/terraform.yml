@@ -57,14 +57,6 @@ jobs:
       - name: Adapt EKS module for AWS Academy
         run: python3 scripts/patch-eks-academy.py
 
-      - name: Debug repository structure
-        run: |
-          cd ..
-          pwd
-          ls -la
-          ls -la agroCD
-          find . -iname "agrocd-applications.yaml"
-      
       - name: Validate Terraform
         run: terraform validate
 
@@ -129,7 +121,7 @@ jobs:
 
           terraform apply -input=false -auto-approve eks-bootstrap.tfplan
 
-      # Fase 2: criar os demais recursos, incluindo Argo CD
+      # Fase 2: criar os demais recursos AWS
       - name: Create full plan
         run: terraform plan -input=false -no-color -out=tfplan
 
