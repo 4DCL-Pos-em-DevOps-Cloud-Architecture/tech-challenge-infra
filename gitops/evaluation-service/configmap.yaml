@@ -9,4 +9,4 @@ data:
   FLAG_SERVICE_URL: "http://flag-service.flag-service.svc.cluster.local:8002"
   TARGETING_SERVICE_URL: "http://targeting-service.targeting-service.svc.cluster.local:8003"
   AWS_SQS_URL: "https://sqs.us-east-1.amazonaws.com/184526658223/togglemaster-dev-events"
-  REDIS_URL: "redis://master.togglemaster-dev-redis.bqyt1c.use1.cache.amazonaws.com:6379"
+  REDIS_URL: "rediss://master.togglemaster-dev-redis.bqyt1c.use1.cache.amazonaws.com:6379"
