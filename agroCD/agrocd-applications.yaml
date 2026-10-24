@@ -11,7 +11,7 @@ spec:
     path: 'gitops/analytics-service'
   destination:
     server: 'https://kubernetes.default.svc'
-    namespace: toggle-master
+    namespace: analytics-service
   syncPolicy:
     automated:
       prune: true
@@ -58,7 +58,7 @@ spec:
     path: 'gitops/auth-service'
   destination:
     server: 'https://kubernetes.default.svc'
-    namespace: toggle-master
+    namespace: auth-service
   syncPolicy:
     automated:
       prune: true
@@ -79,7 +79,7 @@ spec:
     path: 'gitops/evaluation-service'
   destination:
     server: 'https://kubernetes.default.svc'
-    namespace: toggle-master
+    namespace: evaluation-service
   syncPolicy:
     automated:
       prune: true
@@ -100,7 +100,7 @@ spec:
     path: 'gitops/flag-service'
   destination:
     server: 'https://kubernetes.default.svc'
-    namespace: toggle-master
+    namespace: flag-service
   syncPolicy:
     automated:
       prune: true
@@ -121,7 +121,7 @@ spec:
     path: 'gitops/targeting-service'
   destination:
     server: 'https://kubernetes.default.svc'
-    namespace: toggle-master
+    namespace: targeting-service
   syncPolicy:
     automated:
       prune: true
