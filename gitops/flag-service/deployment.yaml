@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: flag-service
-          image: <REGISTRY_URL>/flag-service:latest
+          image: 184526658223.dkr.ecr.us-east-1.amazonaws.com/togglemaster-flag-service:latest
           ports:
             - containerPort: 8002
           env:

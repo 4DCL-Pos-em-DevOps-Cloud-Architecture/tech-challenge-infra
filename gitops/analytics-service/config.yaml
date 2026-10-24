@@ -5,5 +5,5 @@ metadata:
   namespace: analytics-service
 data:
   AWS_REGION: us-east-1
-  AWS_SQS_URL: "<URL_DA_FILA_SQS>"
-  AWS_DYNAMODB_TABLE: "<NOME_DA_TABELA_DYNAMODB>"
+  AWS_SQS_URL: "https://sqs.us-east-1.amazonaws.com/184526658223/togglemaster-dev-events"
+  AWS_DYNAMODB_TABLE: "togglemaster-dev-analytics"

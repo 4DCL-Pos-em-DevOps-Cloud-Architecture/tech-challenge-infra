@@ -8,7 +8,7 @@ data:
   AUTH_SERVICE_URL: "http://auth-service.auth-service.svc.cluster.local:8001"
   FLAG_SERVICE_URL: "http://flag-service.flag-service.svc.cluster.local:8002"
   TARGETING_SERVICE_URL: "http://targeting-service.targeting-service.svc.cluster.local:8003"
-  AWS_SQS_URL: "<URL_DA_FILA_SQS>"
+  AWS_SQS_URL: "https://sqs.us-east-1.amazonaws.com/184526658223/togglemaster-dev-events"
 
   flag-init.sql: |
     CREATE TABLE IF NOT EXISTS flags (
