@@ -22,24 +22,16 @@ module "eks" {
   }
 
   addons = {
-    coredns = {
-      before_compute = true
-    }
-    kube-proxy = {
-      before_compute = true
-    }
-    eks-pod-identity-agent = {
-      before_compute = true
-    }
-    vpc-cni = {
-      before_compute = true
-    }
+    coredns                = {}
+    kube-proxy             = {}
+    eks-pod-identity-agent = {}
+    vpc-cni                = {}
   }
 
   eks_managed_node_groups = {
     general = {
       name           = "${var.cluster_name}-nodes"
-      ami_type       = "AL2023_x86_64_STANDARD"
+      ami_type       = "BOTTLEROCKET_x86_64"
       instance_types = ["t3.medium"]
 
       min_size     = 1
